@@ -1,286 +1,387 @@
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from "remotion";
-import { COLORS, MONO } from "../theme";
-
-// Colors are tuned for the dark code card (#0F172A background).
-const CODE_LINES: { text: string; color: string }[] = [
-  { text: "const frame = useCurrentFrame();", color: "#F8FAFC" },
-  { text: "", color: "#F8FAFC" },
-  { text: "return (", color: "#94A3B8" },
-  { text: "  <div style={{", color: "#94A3B8" },
-  { text: "    opacity: interpolate(", color: "#C4B5FD" },
-  { text: "      frame, [0, 30], [0, 1],", color: "#93C5FD" },
-  { text: "    ),", color: "#C4B5FD" },
-  { text: "  }} />", color: "#94A3B8" },
-  { text: ");", color: "#94A3B8" },
-];
+import { AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame } from "remotion";
+import { Paper } from "../components/Paper";
 
 /**
- * 4200 – 5640 (24s): animations must be frame-driven.
- * One focal point: the frame-driven code pattern vs. CSS animation.
+ * 05 — Frame-driven markup (1440 frames / 24 s)
+ *
+ * The browser's own animation engine is useless for rendering, so every value
+ * is read from the current frame. A blue square snaps along a track to show
+ * what a per-frame value looks like.
  */
+
+const CODE_LINES = [
+  "const frame = useCurrentFrame();",
+  "const opacity = interpolate(frame, [0, 30], [0, 1]);",
+  "const x = interpolate(frame, [0, 60], [0, 400]);",
+] as const;
+
+const TICK_X = [0, 181, 362, 543, 724, 904];
+const TICK_LABEL = ["0.0", "0.2", "0.4", "0.6", "0.8", "1.0"];
+
 export const MarkupFrame: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const titleOpacity = interpolate(frame, [30, 66], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const titleTranslate = interpolate(
-    frame,
-    [30, 66],
-    ["0px 36px", "0px 0px"],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.22, 1, 0.36, 1),
-    },
-  );
-
-  const codeScale = interpolate(frame, [80, 126], [0.95, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.34, 1.4, 0.64, 1),
-    output: "perceptual-scale",
-  });
-  const codeOpacity = interpolate(frame, [80, 112], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
-  // Bad card: slides in, then shakes off.
-  const badOpacity = interpolate(frame, [640, 676], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const badTranslate = interpolate(
-    frame,
-    [640, 690],
-    ["0px -60px", "0px 0px"],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.22, 1, 0.36, 1),
-    },
-  );
-  const shakeDecay = interpolate(frame, [700, 820], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const badRotate = `${Math.sin(frame / 2.2) * 5 * shakeDecay}deg`;
-
-  // Good card: confident slide-in after the bad one.
-  const goodOpacity = interpolate(frame, [860, 896], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const goodTranslate = interpolate(
-    frame,
-    [860, 910],
-    ["0px 60px", "0px 0px"],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.22, 1, 0.36, 1),
-    },
-  );
-  const goodScale = interpolate(frame, [860, 920], [0.94, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.34, 1.56, 0.64, 1),
-    output: "perceptual-scale",
-  });
-
-  const captionOpacity = interpolate(frame, [1080, 1130], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
   return (
-    <AbsoluteFill style={{ padding: "120px 96px" }}>
-      <div style={{ opacity: titleOpacity, translate: titleTranslate }}>
-        <div
-          style={{
-            fontSize: 36,
-            fontWeight: 700,
-            letterSpacing: 6,
-            color: COLORS.accent,
-            marginBottom: 18,
-          }}
-        >
-          useCurrentFrame() + interpolate()
-        </div>
-        <div style={{ fontSize: 96, fontWeight: 900, lineHeight: 1.2 }}>
-          フレーム駆動で描く
-        </div>
-      </div>
+    <AbsoluteFill
+      style={{
+        backgroundColor: "#F2F0EB",
+        fontFamily: '"Noto Sans JP", sans-serif',
+        color: "#0B0B0C",
+        overflow: "hidden",
+      }}
+    >
+      <Paper />
 
-      {/* Code card */}
-      <div
+      <Interactive.Div
+        name="Folio"
         style={{
-          marginTop: 56,
-          opacity: codeOpacity,
-          scale: `${codeScale}`,
-          backgroundColor: "#0F172A",
-          borderRadius: 32,
-          padding: "52px 48px",
-          boxShadow: "0 28px 70px rgba(15, 23, 42, 0.3)",
-          minHeight: 560,
+          position: "absolute",
+          left: 88,
+          top: 100,
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 24,
+          fontWeight: 700,
+          letterSpacing: "0.2em",
         }}
       >
-        {CODE_LINES.map((line, i) => {
-          const start = 120 + i * 26;
-          const lineOpacity = interpolate(frame, [start, start + 22], [0, 1], {
+        <span style={{ width: 18, height: 18, backgroundColor: "#1F3BFF" }} />
+        IFUTO / MOTION
+      </Interactive.Div>
+      <Interactive.Div
+        name="Folio meta"
+        style={{
+          position: "absolute",
+          right: 88,
+          top: 104,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 22,
+          fontWeight: 700,
+          letterSpacing: "0.18em",
+          color: "rgba(11, 11, 12, 0.55)",
+        }}
+      >
+        SECTION 05 / 09
+      </Interactive.Div>
+      <div style={{ position: "absolute", left: 0, top: 168, width: 1080, height: 2, backgroundColor: "#0B0B0C" }} />
+
+      <div style={{ position: "absolute", left: 100, top: 236, width: 104, height: 104, backgroundColor: "#0B0B0C" }} />
+      <Interactive.Div
+        name="Section number"
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 224,
+          width: 104,
+          height: 104,
+          backgroundColor: "#1F3BFF",
+          color: "#F2F0EB",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 52,
+          fontWeight: 700,
+          scale: interpolate(frame, [0, 14], [0.7, 1], {
+            easing: Easing.bezier(0.2, 0, 0, 1),
+            output: "perceptual-scale",
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
-          });
-          return (
-            <div
-              key={i}
-              style={{
-                opacity: lineOpacity,
-                fontFamily: MONO,
-                fontSize: 40,
-                lineHeight: 1.7,
-                fontWeight: i === 4 || i === 5 ? 700 : 400,
-                color: line.color,
-                whiteSpace: "pre",
-              }}
-            >
-              {line.text || " "}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Bad pattern */}
-      <div
-        style={{
-          marginTop: 56,
-          opacity: badOpacity,
-          translate: badTranslate,
-          rotate: badRotate,
-          backgroundColor: COLORS.badSoft,
-          border: `3px solid ${COLORS.bad}`,
-          borderRadius: 28,
-          padding: "40px 44px",
-          display: "flex",
-          alignItems: "center",
-          gap: 32,
+          }),
         }}
       >
-        <div
-          style={{
-            width: 84,
-            height: 84,
-            borderRadius: "50%",
-            backgroundColor: COLORS.bad,
-            color: "#FFFFFF",
-            fontSize: 56,
-            fontWeight: 900,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          ×
-        </div>
-        <div>
-          <div
-            style={{
-              fontSize: 46,
-              fontWeight: 900,
-              color: COLORS.bad,
-              lineHeight: 1.3,
-            }}
-          >
-            CSS animation / transition
-          </div>
-          <div
-            style={{
-              marginTop: 8,
-              fontSize: 36,
-              fontWeight: 500,
-              color: COLORS.sub,
-            }}
-          >
-            レンダー結果に反映されない
-          </div>
-        </div>
-      </div>
+        05
+      </Interactive.Div>
 
-      {/* Good pattern */}
-      <div
-        style={{
-          marginTop: 36,
-          opacity: goodOpacity,
-          translate: goodTranslate,
-          scale: `${goodScale}`,
-          backgroundColor: COLORS.goodSoft,
-          border: `3px solid ${COLORS.good}`,
-          borderRadius: 28,
-          padding: "40px 44px",
-          display: "flex",
-          alignItems: "center",
-          gap: 32,
-        }}
+      <Interactive.Div
+        name="Headline"
+        style={{ position: "absolute", left: 232, top: 216, width: 760, height: 150, overflow: "hidden" }}
       >
-        <div
+        <span
           style={{
-            width: 84,
-            height: 84,
-            borderRadius: "50%",
-            backgroundColor: COLORS.good,
-            color: "#FFFFFF",
-            fontSize: 52,
+            display: "block",
+            fontSize: 84,
             fontWeight: 900,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
+            letterSpacing: "-0.035em",
+            lineHeight: 1.15,
+            translate: interpolate(frame, [8, 34], ["-100% 0px", "0% 0px"], {
+              easing: Easing.bezier(0.16, 1, 0.3, 1),
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
           }}
         >
-          ✓
-        </div>
-        <div>
-          <div
-            style={{
-              fontSize: 46,
-              fontWeight: 900,
-              color: COLORS.good,
-              lineHeight: 1.3,
-            }}
-          >
-            useCurrentFrame()
-          </div>
-          <div
-            style={{
-              marginTop: 8,
-              fontSize: 36,
-              fontWeight: 500,
-              color: COLORS.sub,
-            }}
-          >
-            フレーム番号から値を補間する
-          </div>
-        </div>
-      </div>
+          フレーム駆動で描く
+        </span>
+      </Interactive.Div>
 
-      <div
+      <Interactive.Div
+        name="Lead"
         style={{
-          marginTop: 48,
-          opacity: captionOpacity,
-          fontSize: 44,
-          fontWeight: 700,
-          color: COLORS.sub,
-          textAlign: "center",
-          lineHeight: 1.5,
+          position: "absolute",
+          left: 88,
+          top: 384,
+          width: 904,
+          fontSize: 46,
+          fontWeight: 500,
+          lineHeight: 1.45,
+          opacity: interpolate(frame, [40, 54], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+          translate: interpolate(frame, [40, 64], ["0px 28px", "0px 0px"], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
         }}
       >
         アニメーションは、すべて
         <br />
-        「フレームの関数」として書く
-      </div>
+        <span style={{ color: "#1F3BFF" }}>「フレームの関数」</span>
+        として書く
+      </Interactive.Div>
+
+      {/* Code block */}
+      <Interactive.Div
+        name="Code block"
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 620,
+          width: 904,
+          height: 292,
+          backgroundColor: "#0B0B0C",
+          padding: 34,
+          boxSizing: "border-box",
+          display: "flex",
+          gap: 26,
+        }}
+      >
+        <span
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
+            fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+            fontSize: 24,
+            fontWeight: 700,
+            lineHeight: 1.3,
+            color: "#1F3BFF",
+            opacity: interpolate(frame, [70, 84], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
+          <span>01</span>
+          <span>02</span>
+          <span>03</span>
+        </span>
+        <span style={{ display: "flex", flexDirection: "column", gap: 18, width: 780, overflow: "hidden" }}>
+          {CODE_LINES.map((line, index) => (
+            <span key={line} style={{ display: "block", height: 34, overflow: "hidden" }}>
+              <span
+                style={{
+                  display: "block",
+                  whiteSpace: "nowrap",
+                  fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+                  fontSize: 27,
+                  fontWeight: 400,
+                  lineHeight: 1.3,
+                  color: "#F2F0EB",
+                  translate: interpolate(frame, [86 + index * 34, 124 + index * 34], ["-100% 0px", "0% 0px"], {
+                    easing: Easing.bezier(0.16, 1, 0.3, 1),
+                    extrapolateLeft: "clamp",
+                    extrapolateRight: "clamp",
+                  }),
+                }}
+              >
+                {line}
+              </span>
+            </span>
+          ))}
+        </span>
+      </Interactive.Div>
+
+      {/* Track: the value snaps to a new number every second */}
+      <Interactive.Div
+        name="Track label"
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 930,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 24,
+          fontWeight: 700,
+          letterSpacing: "0.2em",
+          color: "#1F3BFF",
+          opacity: interpolate(frame, [600, 620], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      >
+        USECURRENTFRAME() + INTERPOLATE()
+      </Interactive.Div>
+      <div
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 1064,
+          height: 8,
+          backgroundColor: "#0B0B0C",
+          width: interpolate(frame, [620, 700], [0, 904], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
+      {TICK_X.map((x, index) => (
+        <span
+          key={x}
+          style={{
+            position: "absolute",
+            left: 88 + x - 2,
+            top: 1064,
+            width: 4,
+            height: 40,
+            backgroundColor: "rgba(11, 11, 12, 0.45)",
+            opacity: interpolate(frame, [640 + index * 6, 654 + index * 6], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        />
+      ))}
+      {TICK_LABEL.map((label, index) => (
+        <span
+          key={label}
+          style={{
+            position: "absolute",
+            left: 88 + TICK_X[index] - 24,
+            top: 1120,
+            width: 60,
+            textAlign: "center",
+            fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+            fontSize: 22,
+            fontWeight: 700,
+            color: "rgba(11, 11, 12, 0.55)",
+            opacity: interpolate(frame, [652 + index * 6, 666 + index * 6], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
+          {label}
+        </span>
+      ))}
+      <div
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 1010,
+          width: 68,
+          height: 68,
+          backgroundColor: "#1F3BFF",
+          translate: interpolate(
+            frame,
+            [740, 800, 860, 920, 980, 1040],
+            ["0px 0px", "181px 0px", "362px 0px", "543px 0px", "724px 0px", "904px 0px"],
+            { easing: Easing.step1, extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+          ),
+          opacity: interpolate(frame, [700, 730], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
+
+      {/* The wrong way */}
+      <Interactive.Div
+        name="CSS animation strike"
+        from={1120}
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 1260,
+          display: "flex",
+          alignItems: "center",
+          gap: 30,
+        }}
+      >
+        <span
+          style={{
+            width: 96,
+            height: 96,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#0B0B0C",
+            color: "#F2F0EB",
+            fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+            fontSize: 40,
+            fontWeight: 700,
+          }}
+        >
+          NG
+        </span>
+        <span>
+          <span style={{ position: "relative", display: "block" }}>
+            <span style={{ display: "block", fontSize: 60, fontWeight: 900, letterSpacing: "-0.02em" }}>
+              CSS animation / transition
+            </span>
+            <span
+              style={{
+                position: "absolute",
+                left: 0,
+                top: 40,
+                height: 8,
+                backgroundColor: "#0B0B0C",
+                width: interpolate(frame, [1200, 1280], [0, 636], {
+                  easing: Easing.bezier(0.16, 1, 0.3, 1),
+                  extrapolateLeft: "clamp",
+                  extrapolateRight: "clamp",
+                }),
+              }}
+            />
+          </span>
+          <span
+            style={{
+              display: "block",
+              marginTop: 22,
+              fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+              fontSize: 26,
+              fontWeight: 400,
+              color: "rgba(11, 11, 12, 0.6)",
+              opacity: interpolate(frame, [1230, 1248], [0, 1], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+              }),
+            }}
+          >
+            レンダー結果に反映されない
+          </span>
+        </span>
+      </Interactive.Div>
+
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 1700,
+          height: 10,
+          backgroundColor: "#0B0B0C",
+          width: interpolate(frame, [1320, 1400], [0, 1080], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
     </AbsoluteFill>
   );
 };

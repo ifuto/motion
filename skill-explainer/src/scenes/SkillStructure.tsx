@@ -1,267 +1,407 @@
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from "remotion";
-import { COLORS, MONO } from "../theme";
+import { AbsoluteFill, Easing, Interactive, interpolate, interpolateColors, useCurrentFrame } from "remotion";
+import { Paper } from "../components/Paper";
 
 /**
- * Hub (SKILL.md) fans out to six reference cards.
- * Positions are absolute inside a 1080×1920 frame.
+ * 03 — Structure of the skill (1320 frames / 22 s)
+ *
+ * Six task folders, then a hard-stepped blue cursor that visits each one to
+ * show that only the reference that is needed gets loaded.
  */
-const HUB = { x: 140, y: 470, w: 800, h: 210 };
 
-const CARDS: { label: string; x: number; y: number }[] = [
-  { label: "remotion-create", x: 96, y: 850 },
-  { label: "remotion-markup", x: 564, y: 850 },
-  { label: "remotion-render", x: 96, y: 1130 },
-  { label: "remotion-studio", x: 564, y: 1130 },
-  { label: "remotion-docs", x: 96, y: 1410 },
-  { label: "remotion-upgrade", x: 564, y: 1410 },
-];
+const FOLDERS = [
+  { name: "remotion-create", jp: "プロジェクト作成" },
+  { name: "remotion-markup", jp: "マークアップと演出" },
+  { name: "remotion-render", jp: "書き出し" },
+  { name: "remotion-studio", jp: "プレビュー環境" },
+  { name: "remotion-docs", jp: "ドキュメント参照" },
+  { name: "remotion-upgrade", jp: "バージョン更新" },
+] as const;
 
-const CARD_W = 420;
-const CARD_H = 160;
+const COLUMN_X = [88, 552];
+const ROW_Y = [700, 934, 1168];
 
-/**
- * 1440 – 2760 (22s): the skill is a router.
- * One focal point: SKILL.md distributing to reference files.
- */
 export const SkillStructure: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const titleOpacity = interpolate(frame, [30, 66], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const titleTranslate = interpolate(
-    frame,
-    [30, 66],
-    ["0px 36px", "0px 0px"],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.22, 1, 0.36, 1),
-    },
-  );
-
-  const hubScale = interpolate(frame, [80, 130], [0.9, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.34, 1.56, 0.64, 1),
-    output: "perceptual-scale",
-  });
-  const hubOpacity = interpolate(frame, [80, 115], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
-  const captionOpacity = interpolate(frame, [1040, 1090], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const captionTranslate = interpolate(
-    frame,
-    [1040, 1090],
-    ["0px 28px", "0px 0px"],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.22, 1, 0.36, 1),
-    },
-  );
-
   return (
-    <AbsoluteFill style={{ padding: "120px 96px" }}>
-      <div style={{ opacity: titleOpacity, translate: titleTranslate }}>
-        <div
-          style={{
-            fontSize: 36,
-            fontWeight: 700,
-            letterSpacing: 6,
-            color: COLORS.accent,
-            marginBottom: 18,
-          }}
-        >
-          STRUCTURE
-        </div>
-        <div style={{ fontSize: 96, fontWeight: 900, lineHeight: 1.2 }}>
-          スキルの構造
-        </div>
-      </div>
+    <AbsoluteFill
+      style={{
+        backgroundColor: "#F2F0EB",
+        fontFamily: '"Noto Sans JP", sans-serif',
+        color: "#0B0B0C",
+        overflow: "hidden",
+      }}
+    >
+      <Paper />
 
-      {/* Connectors: drawn from the hub to each card */}
-      <svg
-        width={1080}
-        height={1920}
-        style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none" }}
-      >
-        {CARDS.map((card, i) => {
-          const start = 320 + i * 70;
-          const draw = interpolate(frame, [start, start + 50], [1, 0], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: Easing.bezier(0.22, 1, 0.36, 1),
-          });
-          const fromX = HUB.x + HUB.w / 2;
-          const fromY = HUB.y + HUB.h;
-          const toX = card.x + CARD_W / 2;
-          const toY = card.y;
-          const midY = (fromY + toY) / 2;
-          return (
-            <path
-              key={card.label}
-              d={`M ${fromX} ${fromY} C ${fromX} ${midY}, ${toX} ${midY}, ${toX} ${toY}`}
-              fill="none"
-              stroke={COLORS.accent}
-              strokeWidth={4}
-              strokeLinecap="round"
-              strokeDasharray={1}
-              pathLength={1}
-              strokeDashoffset={draw}
-              opacity={0.55}
-            />
-          );
-        })}
-      </svg>
-
-      {/* Hub card */}
-      <div
+      <Interactive.Div
+        name="Folio"
         style={{
           position: "absolute",
-          left: HUB.x,
-          top: HUB.y,
-          width: HUB.w,
-          height: HUB.h,
-          opacity: hubOpacity,
-          scale: `${hubScale}`,
+          left: 88,
+          top: 100,
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 24,
+          fontWeight: 700,
+          letterSpacing: "0.2em",
         }}
       >
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: COLORS.ink,
-            color: "#FFFFFF",
-            borderRadius: 32,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 14,
-            boxShadow: "0 28px 70px rgba(15, 23, 42, 0.28)",
-          }}
-        >
-          <div
-            style={{
-              fontFamily: MONO,
-              fontSize: 64,
-              fontWeight: 700,
-              letterSpacing: 1,
-            }}
-          >
-            SKILL.md
-          </div>
-          <div style={{ fontSize: 40, fontWeight: 500, opacity: 0.82 }}>
-            タスク別にリファレンスをロード
-          </div>
-        </div>
-      </div>
-
-      {/* Reference cards */}
-      {CARDS.map((card, i) => {
-        const start = 320 + i * 70;
-        const cardOpacity = interpolate(frame, [start, start + 34], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        });
-        const cardTranslate = interpolate(
-          frame,
-          [start, start + 50],
-          ["0px 36px", "0px 0px"],
-          {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: Easing.bezier(0.22, 1, 0.36, 1),
-          },
-        );
-        const cardScale = interpolate(frame, [start, start + 50], [0.92, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: Easing.bezier(0.34, 1.4, 0.64, 1),
-          output: "perceptual-scale",
-        });
-        return (
-          <div
-            key={card.label}
-            style={{
-              position: "absolute",
-              left: card.x,
-              top: card.y,
-              width: CARD_W,
-              height: CARD_H,
-              opacity: cardOpacity,
-              translate: cardTranslate,
-              scale: `${cardScale}`,
-            }}
-          >
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                backgroundColor: COLORS.card,
-                border: `3px solid ${COLORS.line}`,
-                borderLeft: `10px solid ${COLORS.accent}`,
-                borderRadius: 24,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                padding: "0 30px",
-                gap: 8,
-                boxShadow: "0 16px 40px rgba(15, 23, 42, 0.07)",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: MONO,
-                  fontSize: 36,
-                  fontWeight: 700,
-                  color: COLORS.ink,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {card.label}
-              </div>
-              <div
-                style={{
-                  fontFamily: MONO,
-                  fontSize: 28,
-                  fontWeight: 400,
-                  color: COLORS.sub,
-                }}
-              >
-                REFERENCE.md
-              </div>
-            </div>
-          </div>
-        );
-      })}
-
-      <div
+        <span style={{ width: 18, height: 18, backgroundColor: "#1F3BFF" }} />
+        IFUTO / MOTION
+      </Interactive.Div>
+      <Interactive.Div
+        name="Folio meta"
         style={{
           position: "absolute",
-          left: 96,
-          right: 96,
-          bottom: 170,
-          opacity: captionOpacity,
-          translate: captionTranslate,
-          fontSize: 44,
+          right: 88,
+          top: 104,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 22,
           fontWeight: 700,
-          color: COLORS.sub,
-          textAlign: "center",
+          letterSpacing: "0.18em",
+          color: "rgba(11, 11, 12, 0.55)",
+        }}
+      >
+        SECTION 03 / 09
+      </Interactive.Div>
+      <div style={{ position: "absolute", left: 0, top: 168, width: 1080, height: 2, backgroundColor: "#0B0B0C" }} />
+
+      <div style={{ position: "absolute", left: 100, top: 236, width: 104, height: 104, backgroundColor: "#0B0B0C" }} />
+      <Interactive.Div
+        name="Section number"
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 224,
+          width: 104,
+          height: 104,
+          backgroundColor: "#1F3BFF",
+          color: "#F2F0EB",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 52,
+          fontWeight: 700,
+          scale: interpolate(frame, [0, 14], [0.7, 1], {
+            easing: Easing.bezier(0.2, 0, 0, 1),
+            output: "perceptual-scale",
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      >
+        03
+      </Interactive.Div>
+
+      <Interactive.Div
+        name="Headline"
+        style={{ position: "absolute", left: 232, top: 216, width: 760, height: 150, overflow: "hidden" }}
+      >
+        <span
+          style={{
+            display: "block",
+            fontSize: 88,
+            fontWeight: 900,
+            letterSpacing: "-0.03em",
+            lineHeight: 1.1,
+            translate: interpolate(frame, [8, 34], ["-100% 0px", "0% 0px"], {
+              easing: Easing.bezier(0.16, 1, 0.3, 1),
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
+          スキルの構造
+        </span>
+      </Interactive.Div>
+
+      <Interactive.Div
+        name="Lead"
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 372,
+          width: 904,
+          fontSize: 46,
+          fontWeight: 500,
           lineHeight: 1.5,
+          opacity: interpolate(frame, [40, 54], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+          translate: interpolate(frame, [40, 64], ["0px 28px", "0px 0px"], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
         }}
       >
         必要なファイルだけを、
         <br />
         必要なときに読み込む
-      </div>
+      </Interactive.Div>
+
+      {/* Stamp */}
+      <Interactive.Div
+        name="Stamp"
+        from={210}
+        style={{
+          position: "absolute",
+          left: 694,
+          top: 486,
+          width: 298,
+          height: 108,
+          border: "4px solid #1F3BFF",
+          color: "#1F3BFF",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 28,
+          fontWeight: 700,
+          letterSpacing: "0.18em",
+          rotate: interpolate(frame, [210, 240], ["-9deg", "-4deg"], {
+            easing: Easing.spring({ damping: 200 }),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+          scale: interpolate(frame, [210, 232], [0.86, 1], {
+            easing: Easing.bezier(0.2, 0, 0, 1),
+            output: "perceptual-scale",
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      >
+        ON DEMAND
+      </Interactive.Div>
+
+      {/* Folder grid */}
+      {FOLDERS.map((folder, index) => {
+        const x = COLUMN_X[index % 2];
+        const y = ROW_Y[Math.floor(index / 2)];
+        const stepStart = 210 + index * 84;
+
+        return (
+          <Interactive.Div
+            key={folder.name}
+            name={folder.name}
+            from={60 + index * 8}
+            durationInFrames={1320}
+            style={{
+              position: "absolute",
+              left: x,
+              top: y,
+              width: 440,
+              height: 210,
+              border: "2px solid #0B0B0C",
+              backgroundColor:
+                index === FOLDERS.length - 1
+                  ? interpolateColors(frame, [0, stepStart, stepStart + 8], [
+                      "rgba(11, 11, 12, 0)",
+                      "rgba(11, 11, 12, 0)",
+                      "#0B0B0C",
+                    ])
+                  : interpolateColors(
+                      frame,
+                      [0, stepStart, stepStart + 8, stepStart + 72, stepStart + 80],
+                      [
+                        "rgba(11, 11, 12, 0)",
+                        "rgba(11, 11, 12, 0)",
+                        "#0B0B0C",
+                        "#0B0B0C",
+                        "rgba(11, 11, 12, 0)",
+                      ],
+                    ),
+              padding: 26,
+              boxSizing: "border-box",
+              scale: interpolate(frame, [60 + index * 8, 82 + index * 8], [0.94, 1], {
+                easing: Easing.bezier(0.16, 1, 0.3, 1),
+                output: "perceptual-scale",
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+              }),
+            }}
+          >
+            <span
+              style={{
+                display: "block",
+                fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+                fontSize: 22,
+                fontWeight: 700,
+                letterSpacing: "0.2em",
+                color: "#1F3BFF",
+              }}
+            >
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <span
+              style={{
+                display: "block",
+                marginTop: 12,
+                fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+                fontSize: 32,
+                fontWeight: 700,
+                letterSpacing: "-0.01em",
+                color:
+                  index === FOLDERS.length - 1
+                    ? interpolateColors(frame, [0, stepStart, stepStart + 8], ["#0B0B0C", "#0B0B0C", "#F2F0EB"])
+                    : interpolateColors(
+                        frame,
+                        [0, stepStart, stepStart + 8, stepStart + 72, stepStart + 80],
+                        ["#0B0B0C", "#0B0B0C", "#F2F0EB", "#F2F0EB", "#0B0B0C"],
+                      ),
+              }}
+            >
+              {folder.name}
+            </span>
+            <span
+              style={{
+                display: "block",
+                marginTop: 10,
+                fontSize: 26,
+                fontWeight: 500,
+                color:
+                  index === FOLDERS.length - 1
+                    ? interpolateColors(frame, [0, stepStart, stepStart + 8], [
+                        "rgba(11, 11, 12, 0.6)",
+                        "rgba(11, 11, 12, 0.6)",
+                        "rgba(242, 240, 235, 0.7)",
+                      ])
+                    : interpolateColors(
+                        frame,
+                        [0, stepStart, stepStart + 8, stepStart + 72, stepStart + 80],
+                        [
+                          "rgba(11, 11, 12, 0.6)",
+                          "rgba(11, 11, 12, 0.6)",
+                          "rgba(242, 240, 235, 0.7)",
+                          "rgba(242, 240, 235, 0.7)",
+                          "rgba(11, 11, 12, 0.6)",
+                        ],
+                      ),
+              }}
+            >
+              {folder.jp}
+            </span>
+          </Interactive.Div>
+        );
+      })}
+
+      {/* Hard-stepped cursor that visits every folder */}
+      <div
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 690,
+          width: 440,
+          height: 10,
+          backgroundColor: "#1F3BFF",
+          translate: interpolate(
+            frame,
+            [180, 264, 348, 432, 516, 600],
+            ["0px 0px", "464px 0px", "0px 234px", "464px 234px", "0px 468px", "464px 468px"],
+            {
+              easing: Easing.step1,
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            },
+          ),
+        }}
+      />
+
+      {/* Caption that swaps with the cursor */}
+      {FOLDERS.map((folder, index) => (
+        <Interactive.Div
+          key={folder.name}
+          name="Cursor caption"
+          from={180 + index * 84}
+          durationInFrames={84}
+          style={{
+            position: "absolute",
+            left: 88,
+            top: 1420,
+            display: "flex",
+            alignItems: "center",
+            gap: 18,
+            fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+            fontSize: 30,
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+          }}
+        >
+          <span style={{ width: 22, height: 22, backgroundColor: "#1F3BFF" }} />
+          {folder.name}
+          <span style={{ color: "rgba(11, 11, 12, 0.55)" }}>を読み込む</span>
+        </Interactive.Div>
+      ))}
+
+      {/* Closing band */}
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 1520,
+          width: 1080,
+          height: 200,
+          backgroundColor: "#0B0B0C",
+          translate: interpolate(frame, [690, 750], ["0px 400px", "0px 0px"], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 1520,
+          width: 22,
+          height: 200,
+          backgroundColor: "#1F3BFF",
+          translate: interpolate(frame, [690, 750], ["0px 400px", "0px 0px"], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
+      <Interactive.Div
+        name="Band statement"
+        from={760}
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 1572,
+          width: 904,
+          color: "#F2F0EB",
+          fontSize: 44,
+          fontWeight: 700,
+          lineHeight: 1.4,
+        }}
+      >
+        タスク別に、リファレンスをロードする
+      </Interactive.Div>
+      <Interactive.Div
+        name="Band label"
+        from={760}
+        style={{
+          position: "absolute",
+          right: 88,
+          top: 1576,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 24,
+          fontWeight: 700,
+          letterSpacing: "0.2em",
+          color: "#1F3BFF",
+        }}
+      >
+        LOAD → READ → APPLY
+      </Interactive.Div>
     </AbsoluteFill>
   );
 };

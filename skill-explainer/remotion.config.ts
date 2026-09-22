@@ -15,4 +15,4 @@ Config.overrideBundlerConfig(enableTailwind);
 
 // Chromium (from @sparticuz/chromium) — remotion.media is unreachable in
 // this sandbox, so the headless browser is provided locally instead.
-Config.setBrowserExecutable("/tmp/chromium");
+Config.setBrowserExecutable("/tmp/chromium/chrome-linux/chrome");

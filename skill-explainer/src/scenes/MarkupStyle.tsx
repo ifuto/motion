@@ -1,263 +1,510 @@
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from "remotion";
-import { COLORS, MONO } from "../theme";
+import { AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame } from "remotion";
+import { Paper } from "../components/Paper";
 
 /**
- * Looping demo dots (period 150 frames).
- * Linear vs. spring-eased travel across the same track.
+ * 06 — Timing and style (1440 frames / 24 s)
+ *
+ * Three rules, printed one under the other, each with its own proof:
+ * an easing curve, an inline interpolate(), and the three transform
+ * properties that the Studio can actually edit.
  */
-const Lane: React.FC<{
-  label: string;
-  color: string;
-  progress: number;
-}> = ({ label, color, progress }) => {
-  const trackW = 460;
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-      <div
-        style={{
-          width: 150,
-          fontSize: 34,
-          fontWeight: 700,
-          color: COLORS.sub,
-          textAlign: "right",
-        }}
-      >
-        {label}
-      </div>
-      <div
-        style={{
-          position: "relative",
-          width: trackW,
-          height: 14,
-          borderRadius: 999,
-          backgroundColor: COLORS.line,
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            top: -13,
-            width: 40,
-            height: 40,
-            borderRadius: "50%",
-            backgroundColor: color,
-            translate: `${progress * (trackW - 40)}px 0px`,
-          }}
-        />
-      </div>
-      <div
-        style={{
-          fontFamily: MONO,
-          fontSize: 30,
-          color: COLORS.sub,
-          width: 90,
-        }}
-      >
-        {Math.round(progress * 100)}%
-      </div>
-    </div>
-  );
-};
 
-/**
- * 5640 – 7080 (24s): timing & style rules.
- * One focal point: three stacked rule cards appearing in order.
- */
+const ROWS_Y = [680, 1010, 1340];
+
 export const MarkupStyle: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const titleOpacity = interpolate(frame, [30, 66], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const titleTranslate = interpolate(
-    frame,
-    [30, 66],
-    ["0px 36px", "0px 0px"],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.22, 1, 0.36, 1),
-    },
-  );
-
-  const cardReveal = (start: number) => {
-    const opacity = interpolate(frame, [start, start + 34], [0, 1], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    });
-    const translate = interpolate(
-      frame,
-      [start, start + 50],
-      ["0px 44px", "0px 0px"],
-      {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-        easing: Easing.bezier(0.22, 1, 0.36, 1),
-      },
-    );
-    const scale = interpolate(frame, [start, start + 50], [0.95, 1], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.34, 1.4, 0.64, 1),
-      output: "perceptual-scale",
-    });
-    return { opacity, translate, scale: `${scale}` };
-  };
-
-  // Demo dots: loop every 150 frames.
-  const loop = frame % 150;
-  const linearProgress = interpolate(loop, [0, 120], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const springProgress = interpolate(loop, [0, 105], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.34, 1.56, 0.64, 1),
-  });
-
-  const cardBase: React.CSSProperties = {
-    backgroundColor: COLORS.card,
-    border: `2px solid ${COLORS.line}`,
-    borderRadius: 32,
-    boxShadow: "0 20px 50px rgba(15, 23, 42, 0.07)",
-    padding: "44px 48px",
-  };
-
-  const badge = (text: string, color: string, bg: string): React.CSSProperties => ({
-    display: "inline-block",
-    fontFamily: MONO,
-    fontSize: 34,
-    fontWeight: 700,
-    color,
-    backgroundColor: bg,
-    borderRadius: 14,
-    padding: "12px 22px",
-    marginRight: 16,
-    marginTop: 16,
-  });
-
   return (
-    <AbsoluteFill style={{ padding: "120px 96px" }}>
-      <div style={{ opacity: titleOpacity, translate: titleTranslate }}>
-        <div
+    <AbsoluteFill
+      style={{
+        backgroundColor: "#F2F0EB",
+        fontFamily: '"Noto Sans JP", sans-serif',
+        color: "#0B0B0C",
+        overflow: "hidden",
+      }}
+    >
+      <Paper />
+
+      <Interactive.Div
+        name="Folio"
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 100,
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 24,
+          fontWeight: 700,
+          letterSpacing: "0.2em",
+        }}
+      >
+        <span style={{ width: 18, height: 18, backgroundColor: "#1F3BFF" }} />
+        IFUTO / MOTION
+      </Interactive.Div>
+      <Interactive.Div
+        name="Folio meta"
+        style={{
+          position: "absolute",
+          right: 88,
+          top: 104,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 22,
+          fontWeight: 700,
+          letterSpacing: "0.18em",
+          color: "rgba(11, 11, 12, 0.55)",
+        }}
+      >
+        SECTION 06 / 09
+      </Interactive.Div>
+      <div style={{ position: "absolute", left: 0, top: 168, width: 1080, height: 2, backgroundColor: "#0B0B0C" }} />
+
+      <div style={{ position: "absolute", left: 100, top: 236, width: 104, height: 104, backgroundColor: "#0B0B0C" }} />
+      <Interactive.Div
+        name="Section number"
+        style={{
+          position: "absolute",
+          left: 88,
+          top: 224,
+          width: 104,
+          height: 104,
+          backgroundColor: "#1F3BFF",
+          color: "#F2F0EB",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 52,
+          fontWeight: 700,
+          scale: interpolate(frame, [0, 14], [0.7, 1], {
+            easing: Easing.bezier(0.2, 0, 0, 1),
+            output: "perceptual-scale",
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      >
+        06
+      </Interactive.Div>
+
+      <Interactive.Div
+        name="Headline"
+        style={{ position: "absolute", left: 232, top: 216, width: 760, height: 150, overflow: "hidden" }}
+      >
+        <span
           style={{
-            fontSize: 36,
-            fontWeight: 700,
-            letterSpacing: 6,
-            color: COLORS.accent,
-            marginBottom: 18,
+            display: "block",
+            fontSize: 84,
+            fontWeight: 900,
+            letterSpacing: "-0.035em",
+            lineHeight: 1.15,
+            translate: interpolate(frame, [8, 34], ["-100% 0px", "0% 0px"], {
+              easing: Easing.bezier(0.16, 1, 0.3, 1),
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
           }}
         >
-          TIMING & STYLE
-        </div>
-        <div style={{ fontSize: 96, fontWeight: 900, lineHeight: 1.2 }}>
           タイミングと書き方
-        </div>
-      </div>
+        </span>
+      </Interactive.Div>
 
-      {/* Card A: easing */}
-      <div
+      <Interactive.Div
+        name="Lead"
         style={{
-          marginTop: 64,
-          ...cardReveal(60),
-          ...cardBase,
+          position: "absolute",
+          left: 88,
+          top: 372,
+          width: 904,
+          fontSize: 46,
+          fontWeight: 500,
+          lineHeight: 1.45,
+          opacity: interpolate(frame, [40, 54], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+          translate: interpolate(frame, [40, 64], ["0px 28px", "0px 0px"], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
         }}
       >
-        <div style={{ fontSize: 48, fontWeight: 900, lineHeight: 1.3 }}>
+        動きの質感は、書き方で決まる
+      </Interactive.Div>
+
+      {/* ---- 01 easing ---- */}
+      <div
+        style={{
+          position: "absolute",
+          left: 88,
+          top: ROWS_Y[0],
+          height: 2,
+          backgroundColor: "rgba(11, 11, 12, 0.35)",
+          width: interpolate(frame, [60, 110], [0, 904], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
+      <Interactive.Div
+        name="Row 01"
+        from={72}
+        style={{
+          position: "absolute",
+          left: 88,
+          top: ROWS_Y[0] + 34,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 40,
+          fontWeight: 700,
+          color: "#1F3BFF",
+        }}
+      >
+        01
+      </Interactive.Div>
+      <Interactive.Div
+        name="Rule 01 — easing"
+        style={{ position: "absolute", left: 196, top: ROWS_Y[0] + 18, width: 796, height: 84, overflow: "hidden" }}
+      >
+        <span
+          style={{
+            display: "block",
+            fontSize: 56,
+            fontWeight: 900,
+            letterSpacing: "-0.02em",
+            lineHeight: 1.2,
+            translate: interpolate(frame, [76, 118], ["-100% 0px", "0% 0px"], {
+              easing: Easing.bezier(0.16, 1, 0.3, 1),
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
           イージングで質感を決める
-        </div>
-        <div style={{ marginTop: 6 }}>
-          <span style={badge("Easing.bezier()", COLORS.accent, COLORS.accentSoft)}>
-            Easing.bezier()
-          </span>
-          <span style={badge("Easing.spring()", COLORS.violet, COLORS.violetSoft)}>
-            Easing.spring()
-          </span>
-        </div>
-        <div
+        </span>
+      </Interactive.Div>
+
+      <Interactive.Svg
+        name="Easing graph"
+        width={420}
+        height={170}
+        viewBox="0 0 420 170"
+        style={{ position: "absolute", left: 196, top: ROWS_Y[0] + 110 }}
+      >
+        <Interactive.Line name="Grid v1" x1={105} y1={0} x2={105} y2={166} stroke="rgba(11, 11, 12, 0.16)" strokeWidth={1} />
+        <Interactive.Line name="Grid v2" x1={210} y1={0} x2={210} y2={166} stroke="rgba(11, 11, 12, 0.16)" strokeWidth={1} />
+        <Interactive.Line name="Grid v3" x1={315} y1={0} x2={315} y2={166} stroke="rgba(11, 11, 12, 0.16)" strokeWidth={1} />
+        <Interactive.Line name="Grid h1" x1={0} y1={55} x2={416} y2={55} stroke="rgba(11, 11, 12, 0.16)" strokeWidth={1} />
+        <Interactive.Line name="Grid h2" x1={0} y1={110} x2={416} y2={110} stroke="rgba(11, 11, 12, 0.16)" strokeWidth={1} />
+        <Interactive.Line name="Axis x" x1={0} y1={166} x2={416} y2={166} stroke="#0B0B0C" strokeWidth={3} />
+        <Interactive.Line name="Axis y" x1={0} y1={0} x2={0} y2={166} stroke="#0B0B0C" strokeWidth={3} />
+        <Interactive.Path
+          name="Easing.bezier curve"
+          d="M 6 162 C 150 162, 300 14, 414 8"
+          fill="none"
+          stroke="#1F3BFF"
+          strokeWidth={6}
+          strokeDasharray={1000}
+          strokeDashoffset={interpolate(frame, [150, 420], [1000, 0], {
+            easing: Easing.bezier(0.4, 0, 0.2, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          })}
+        />
+        <Interactive.Line
+          name="Linear reference"
+          x1={6}
+          y1={162}
+          x2={414}
+          y2={8}
+          stroke="rgba(11, 11, 12, 0.35)"
+          strokeWidth={3}
+          strokeDasharray={12}
+        />
+      </Interactive.Svg>
+
+      <Interactive.Div
+        name="Easing chips"
+        from={104}
+        style={{ position: "absolute", left: 656, top: ROWS_Y[0] + 146, display: "flex", flexDirection: "column", gap: 16 }}
+      >
+        <span
           style={{
-            marginTop: 34,
             display: "flex",
-            flexDirection: "column",
-            gap: 34,
-          }}
-        >
-          <Lane
-            label="linear"
-            color={COLORS.sub}
-            progress={linearProgress}
-          />
-          <Lane
-            label="spring"
-            color={COLORS.accent}
-            progress={springProgress}
-          />
-        </div>
-      </div>
-
-      {/* Card B: inline interpolate */}
-      <div
-        style={{
-          marginTop: 44,
-          ...cardReveal(520),
-          ...cardBase,
-        }}
-      >
-        <div style={{ fontSize: 48, fontWeight: 900, lineHeight: 1.3 }}>
-          interpolate は style にインライン
-        </div>
-        <div
-          style={{
-            marginTop: 16,
-            fontSize: 40,
-            fontWeight: 500,
-            color: COLORS.sub,
-            lineHeight: 1.5,
-          }}
-        >
-          Studio 上で値を直接触りやすい
-        </div>
-        <div>
-          <span style={badge("style={{ … }}", COLORS.good, COLORS.goodSoft)}>
-            style={"{ … }"}
-          </span>
-        </div>
-      </div>
-
-      {/* Card C: transform properties */}
-      <div
-        style={{
-          marginTop: 44,
-          ...cardReveal(940),
-          ...cardBase,
-        }}
-      >
-        <div style={{ fontSize: 48, fontWeight: 900, lineHeight: 1.3 }}>
-          transform 文字列は使わない
-        </div>
-        <div style={{ marginTop: 6 }}>
-          <span style={badge("scale", COLORS.accent, COLORS.accentSoft)}>scale</span>
-          <span style={badge("translate", COLORS.accent, COLORS.accentSoft)}>
-            translate
-          </span>
-          <span style={badge("rotate", COLORS.accent, COLORS.accentSoft)}>
-            rotate
-          </span>
-        </div>
-        <div
-          style={{
-            marginTop: 22,
-            fontSize: 38,
+            alignItems: "center",
+            height: 56,
+            paddingLeft: 20,
+            paddingRight: 20,
+            border: "2px solid #0B0B0C",
+            fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+            fontSize: 26,
             fontWeight: 700,
-            color: COLORS.violet,
           }}
         >
-          scale には perceptual-scale を
-        </div>
-      </div>
+          Easing.bezier()
+        </span>
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center",
+            height: 56,
+            paddingLeft: 20,
+            paddingRight: 20,
+            border: "2px solid #1F3BFF",
+            color: "#1F3BFF",
+            fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+            fontSize: 26,
+            fontWeight: 700,
+          }}
+        >
+          Easing.spring()
+        </span>
+      </Interactive.Div>
+
+      {/* ---- 02 inline interpolate ---- */}
+      <div
+        style={{
+          position: "absolute",
+          left: 88,
+          top: ROWS_Y[1],
+          height: 2,
+          backgroundColor: "rgba(11, 11, 12, 0.35)",
+          width: interpolate(frame, [440, 490], [0, 904], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
+      <Interactive.Div
+        name="Row 02"
+        from={452}
+        style={{
+          position: "absolute",
+          left: 88,
+          top: ROWS_Y[1] + 34,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 40,
+          fontWeight: 700,
+          color: "#1F3BFF",
+        }}
+      >
+        02
+      </Interactive.Div>
+      <Interactive.Div
+        name="Rule 02 — inline"
+        style={{ position: "absolute", left: 196, top: ROWS_Y[1] + 18, width: 796, height: 84, overflow: "hidden" }}
+      >
+        <span
+          style={{
+            display: "block",
+            fontSize: 56,
+            fontWeight: 900,
+            letterSpacing: "-0.02em",
+            lineHeight: 1.2,
+            translate: interpolate(frame, [456, 498], ["-100% 0px", "0% 0px"], {
+              easing: Easing.bezier(0.16, 1, 0.3, 1),
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
+          interpolate は style にインライン
+        </span>
+      </Interactive.Div>
+      <Interactive.Div
+        name="Inline example"
+        from={500}
+        style={{
+          position: "absolute",
+          left: 196,
+          top: ROWS_Y[1] + 108,
+          width: 796,
+          height: 104,
+          display: "flex",
+          alignItems: "center",
+          paddingLeft: 28,
+          boxSizing: "border-box",
+          backgroundColor: "#0B0B0C",
+          color: "#F2F0EB",
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 26,
+          overflow: "hidden",
+        }}
+      >
+        <span
+          style={{
+            display: "block",
+            whiteSpace: "nowrap",
+            translate: interpolate(frame, [520, 560], ["-100% 0px", "0% 0px"], {
+              easing: Easing.bezier(0.16, 1, 0.3, 1),
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
+          {'style={{ opacity: interpolate(frame, [0, 30], [0, 1]) }}'}
+        </span>
+      </Interactive.Div>
+      <Interactive.Div
+        name="Inline note"
+        from={560}
+        style={{
+          position: "absolute",
+          left: 196,
+          top: ROWS_Y[1] + 232,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 24,
+          fontWeight: 400,
+          color: "rgba(11, 11, 12, 0.6)",
+        }}
+      >
+        Studio 上で、値を直接触れる
+      </Interactive.Div>
+
+      {/* ---- 03 transform properties ---- */}
+      <div
+        style={{
+          position: "absolute",
+          left: 88,
+          top: ROWS_Y[2],
+          height: 2,
+          backgroundColor: "rgba(11, 11, 12, 0.35)",
+          width: interpolate(frame, [840, 890], [0, 904], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
+      <Interactive.Div
+        name="Row 03"
+        from={852}
+        style={{
+          position: "absolute",
+          left: 88,
+          top: ROWS_Y[2] + 34,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 40,
+          fontWeight: 700,
+          color: "#1F3BFF",
+        }}
+      >
+        03
+      </Interactive.Div>
+      <Interactive.Div
+        name="Rule 03 — no transform strings"
+        style={{ position: "absolute", left: 196, top: ROWS_Y[2] + 18, width: 796, height: 84, overflow: "hidden" }}
+      >
+        <span
+          style={{
+            display: "block",
+            fontSize: 56,
+            fontWeight: 900,
+            letterSpacing: "-0.02em",
+            lineHeight: 1.2,
+            translate: interpolate(frame, [856, 898], ["-100% 0px", "0% 0px"], {
+              easing: Easing.bezier(0.16, 1, 0.3, 1),
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
+          transform 文字列は使わない
+        </span>
+      </Interactive.Div>
+      <Interactive.Div
+        name="Struck transform"
+        from={900}
+        style={{
+          position: "absolute",
+          left: 196,
+          top: ROWS_Y[2] + 112,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 28,
+          fontWeight: 400,
+          color: "rgba(11, 11, 12, 0.75)",
+        }}
+      >
+        transform: translateY(120px)
+        <span
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 20,
+            height: 6,
+            backgroundColor: "#0B0B0C",
+            width: interpolate(frame, [920, 980], [0, 402], {
+              easing: Easing.bezier(0.16, 1, 0.3, 1),
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        />
+      </Interactive.Div>
+      <Interactive.Div
+        name="Transform chips"
+        from={960}
+        style={{
+          position: "absolute",
+          left: 196,
+          top: ROWS_Y[2] + 172,
+          display: "flex",
+          gap: 18,
+        }}
+      >
+        {["scale", "translate", "rotate"].map((property) => (
+          <span
+            key={property}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              height: 60,
+              paddingLeft: 22,
+              paddingRight: 22,
+              border: "3px solid #1F3BFF",
+              color: "#1F3BFF",
+              fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+              fontSize: 28,
+              fontWeight: 700,
+            }}
+          >
+            {property}
+          </span>
+        ))}
+      </Interactive.Div>
+      <Interactive.Div
+        name="Perceptual note"
+        from={1010}
+        style={{
+          position: "absolute",
+          left: 196,
+          top: ROWS_Y[2] + 258,
+          fontFamily: '"JetBrains Mono", "Noto Sans JP", monospace',
+          fontSize: 24,
+          fontWeight: 400,
+          color: "rgba(11, 11, 12, 0.6)",
+        }}
+      >
+        scale には output: 'perceptual-scale' を
+      </Interactive.Div>
+
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 1740,
+          height: 10,
+          backgroundColor: "#0B0B0C",
+          width: interpolate(frame, [1240, 1320], [0, 1080], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
     </AbsoluteFill>
   );
 };

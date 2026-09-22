@@ -1,7 +1,8 @@
-import { AbsoluteFill, Composition, Sequence } from "remotion";
-import { Background } from "./components/Background";
-import { Scene } from "./components/Scene";
-import { COLORS, FONT } from "./theme";
+import { TransitionSeries, linearTiming } from "@remotion/transitions";
+import { slide } from "@remotion/transitions/slide";
+import { wipe } from "@remotion/transitions/wipe";
+import { AbsoluteFill } from "remotion";
+import { PageFurniture } from "./components/PageFurniture";
 import { Opening } from "./scenes/Opening";
 import { AboutRepo } from "./scenes/AboutRepo";
 import { SkillStructure } from "./scenes/SkillStructure";
@@ -13,62 +14,89 @@ import { MoreSkills } from "./scenes/MoreSkills";
 import { Closing } from "./scenes/Closing";
 
 /**
- * Scene timeline (60 fps, 1080×1920, total 10800 frames = 3 minutes).
+ * MOTION / SKILL EXPLAINER — 1080 × 1920, 60 fps, 3 minutes.
  *
- *    0 –  480  Opening             (8s)
- *  480 – 1440  About the repo      (16s)
- * 1440 – 2760  Skill structure     (22s)
- * 2760 – 4200  Create flow         (24s)
- * 4200 – 5640  Markup: frames      (24s)
- * 5640 – 7080  Markup: timing      (24s)
- * 7080 – 8400  Layout rules        (22s)
- * 8400 – 9600  More skills         (20s)
- * 9600 – 10800 Closing             (20s)
+ * Timeline (transitions overlap the scenes, so the total is shorter than the
+ * sum of the sequences):
+ *
+ *   Opening          09.0 s
+ *   AboutRepo        16.0 s
+ *   SkillStructure   22.0 s
+ *   CreateFlow       24.0 s
+ *   MarkupFrame      24.0 s
+ *   MarkupStyle      24.0 s
+ *   LayoutRules      22.0 s
+ *   MoreSkills       20.0 s
+ *   Closing          21.0 s
+ *   -------------------------
+ *   10920 frames minus 8 transitions (4 × 14 + 4 × 16 = 120) = 10800 frames
+ *   10800 / 60 fps = 180 s = 3 minutes
  */
-const SCENES = [
-  { from: 0, duration: 480, Component: Opening },
-  { from: 480, duration: 960, Component: AboutRepo },
-  { from: 1440, duration: 1320, Component: SkillStructure },
-  { from: 2760, duration: 1440, Component: CreateFlow },
-  { from: 4200, duration: 1440, Component: MarkupFrame },
-  { from: 5640, duration: 1440, Component: MarkupStyle },
-  { from: 7080, duration: 1320, Component: LayoutRules },
-  { from: 8400, duration: 1200, Component: MoreSkills },
-  { from: 9600, duration: 1200, Component: Closing },
-] as const;
-
-const TOTAL_DURATION = 10800;
-
-const MotionSkillExplainer: React.FC = () => {
+export const MotionSkillExplainer: React.FC = () => {
   return (
-    <AbsoluteFill
-      style={{
-        backgroundColor: COLORS.bg,
-        fontFamily: FONT,
-        color: COLORS.ink,
-      }}
-    >
-      <Background />
-      {SCENES.map(({ from, duration, Component }) => (
-        <Sequence key={from} from={from} durationInFrames={duration}>
-          <Scene duration={duration}>
-            <Component />
-          </Scene>
-        </Sequence>
-      ))}
+    <AbsoluteFill style={{ backgroundColor: "#F2F0EB", fontFamily: '"Noto Sans JP", sans-serif' }}>
+      <TransitionSeries>
+        <TransitionSeries.Sequence durationInFrames={540} name="Opening">
+          <Opening />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={wipe({ direction: "from-left" })}
+          timing={linearTiming({ durationInFrames: 14 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={960} name="AboutRepo">
+          <AboutRepo />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={slide({ direction: "from-bottom" })}
+          timing={linearTiming({ durationInFrames: 16 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={1320} name="SkillStructure">
+          <SkillStructure />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={wipe({ direction: "from-left" })}
+          timing={linearTiming({ durationInFrames: 14 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={1440} name="CreateFlow">
+          <CreateFlow />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={slide({ direction: "from-bottom" })}
+          timing={linearTiming({ durationInFrames: 16 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={1440} name="MarkupFrame">
+          <MarkupFrame />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={wipe({ direction: "from-left" })}
+          timing={linearTiming({ durationInFrames: 14 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={1440} name="MarkupStyle">
+          <MarkupStyle />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={slide({ direction: "from-bottom" })}
+          timing={linearTiming({ durationInFrames: 16 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={1320} name="LayoutRules">
+          <LayoutRules />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={wipe({ direction: "from-left" })}
+          timing={linearTiming({ durationInFrames: 14 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={1200} name="MoreSkills">
+          <MoreSkills />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={slide({ direction: "from-bottom" })}
+          timing={linearTiming({ durationInFrames: 16 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={1260} name="Closing">
+          <Closing />
+        </TransitionSeries.Sequence>
+      </TransitionSeries>
+      <PageFurniture />
     </AbsoluteFill>
-  );
-};
-
-export const MyComposition: React.FC = () => {
-  return (
-    <Composition
-      id="MotionSkillExplainer"
-      component={MotionSkillExplainer}
-      durationInFrames={TOTAL_DURATION}
-      fps={60}
-      width={1080}
-      height={1920}
-    />
   );
 };
