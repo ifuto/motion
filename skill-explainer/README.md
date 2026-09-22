@@ -67,6 +67,27 @@ src/
 
 - 日本語フォントは `@fontsource/noto-sans-jp`（npm 同梱・オフライン利用）。
 
+## プレビューと検証
+
+書き出したファイルの尺・色域を確認し、レビュー用の素材を作るスクリプト。
+
+```console
+node scripts/make-preview-clips.mjs <master.mp4> /home/user/preview
+node scripts/preview-server.mjs /home/user/preview 4321   # Range対応の静的サーバ
+```
+
+- `make-preview-clips.mjs` は本編を互換重視（yuv420p / limited range / bt709 /
+  1秒キーフレーム / faststart）で再エンコードし、さらにシーン別の MP4 と GIF を出力する。
+- `preview-server.mjs` は `Range` に対応した静的サーバ。レビューページ
+  （`/home/user/preview/index.html`）から本編とシーン別クリップを再生でき、
+  ブラウザが読み取った `duration` をその場で表示する。
+
+尺の確認は次の2通りで行える（どちらも10800フレーム=180.000秒を返す）。
+
+```console
+ffprobe -v error -show_entries stream=nb_frames -show_entries format=duration <file.mp4>
+```
+
 ## コマンド
 
 ```console
