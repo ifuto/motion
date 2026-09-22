@@ -3,13 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Motion Skill Explainer — レビュー</title>
+    <title>Motion Skill Explainer — レビュー (180.0s / 10800 frames)</title>
     <style>
-      :root {
-        --paper: #f2f0eb;
-        --ink: #0b0b0c;
-        --blue: #1f3bff;
-      }
+      :root { --paper: #f2f0eb; --ink: #0b0b0c; --blue: #1f3bff; }
       * { box-sizing: border-box; }
       body {
         margin: 0;
@@ -20,76 +16,77 @@
           linear-gradient(90deg, rgba(11, 11, 12, 0.07) 1px, transparent 1px);
         background-size: 60px 60px;
       }
-      header {
-        border-bottom: 4px solid var(--ink);
-        padding: 28px 32px 24px;
-        background: var(--paper);
-      }
-      h1 { margin: 0 0 10px; font-size: 34px; letter-spacing: -0.02em; }
-      .lede { margin: 0; font-size: 16px; line-height: 1.7; max-width: 900px; }
+      header { border-bottom: 4px solid var(--ink); padding: 26px 32px 22px; background: var(--paper); }
+      h1 { margin: 0 0 12px; font-size: 32px; letter-spacing: -0.02em; }
+      .lede { margin: 0; font-size: 16px; line-height: 1.75; max-width: 980px; }
       .lede b { background: var(--blue); color: var(--paper); padding: 0 6px; }
-      main { padding: 28px 32px 80px; }
+      main { padding: 26px 32px 90px; }
       h2 {
-        font-size: 20px;
-        letter-spacing: 0.18em;
+        font-size: 19px; letter-spacing: 0.18em; margin: 44px 0 14px;
         font-family: "SFMono-Regular", "JetBrains Mono", monospace;
-        margin: 40px 0 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        display: flex; align-items: center; gap: 12px;
       }
       h2::before { content: ""; width: 16px; height: 16px; background: var(--blue); }
-      .film { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 28px; align-items: start; }
+      .hint { margin: 0 0 16px; font-size: 14px; line-height: 1.7; color: rgba(11, 11, 12, 0.72); max-width: 980px; }
+      img.full { width: 100%; max-width: 1100px; border: 2px solid var(--ink); background: #fff; display: block; }
+      .film { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 26px; align-items: start; }
       video { width: 100%; background: #000; border: 2px solid var(--ink); }
       .meta {
         font-family: "SFMono-Regular", "JetBrains Mono", monospace;
-        font-size: 13px;
-        line-height: 1.9;
-        border: 2px solid var(--ink);
-        padding: 16px 18px;
-        background: #fff;
+        font-size: 13px; line-height: 1.95; border: 2px solid var(--ink); padding: 16px 18px; background: #fff;
       }
       .meta dt { color: rgba(11, 11, 12, 0.55); }
-      .meta b { color: var(--blue); }
-      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 22px; }
+      .meta b, .meta dd.live { color: var(--blue); font-weight: 700; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 22px; }
       .card { border-top: 4px solid var(--ink); padding-top: 12px; }
       .card h3 { margin: 0 0 4px; font-size: 16px; }
       .card .dur { font-family: "SFMono-Regular", "JetBrains Mono", monospace; font-size: 12px; color: rgba(11, 11, 12, 0.6); }
-      .card video, .card img { margin-top: 10px; width: 100%; border: 2px solid var(--ink); background: #000; }
-      .row { display: flex; gap: 10px; margin-top: 8px; font-size: 12px; }
+      .card video { margin-top: 10px; }
+      .row { display: flex; gap: 14px; margin-top: 8px; font-size: 12px; font-family: "SFMono-Regular", "JetBrains Mono", monospace; }
       .row a { color: var(--blue); }
       .note {
-        margin-top: 46px;
-        border: 2px solid var(--ink);
-        border-left: 14px solid var(--blue);
-        padding: 18px 22px;
-        background: #fff;
-        font-size: 15px;
-        line-height: 1.8;
-        max-width: 900px;
+        margin-top: 46px; border: 2px solid var(--ink); border-left: 14px solid var(--blue);
+        padding: 18px 22px; background: #fff; font-size: 15px; line-height: 1.85; max-width: 980px;
       }
       code { font-family: "SFMono-Regular", "JetBrains Mono", monospace; background: #e9e6df; padding: 1px 6px; }
     </style>
   </head>
   <body>
     <header>
-      <h1>Motion Skill Explainer — レビュー用ページ</h1>
+      <h1>Motion Skill Explainer — レビュー</h1>
       <p class="lede">
-        書き出した動画の<b>実際の長さ</b>と内容を、このブラウザ上で直接確認できます。
-        各動画の下に出ている <code>duration</code> は、お使いのブラウザがファイルから読み取った実際の尺です。
+        この動画は <b>180.0秒 / 10800フレーム</b>（1080×1920 / 60fps を3分に収めたもの）です。
+        ここでは「動画ファイル」「GIF」「フィルムストリップ」の3形式で同じ内容を確認できます。
+        動画プレビューが途中で止まる環境でも、GIFとストリップは最後まで表示されます。
       </p>
     </header>
 
     <main>
+      <h2>全尺を静止画で / FILM STRIP</h2>
+      <p class="hint">5秒おきに36コマを抜き出したもの。0:00 から 2:55 まで、9シーンぶんが並んでいます。</p>
+      <img class="full" src="./film-strip.png" alt="5秒ごとの36コマ" />
+
+      <h2>全尺をGIFで / FULL LENGTH GIF</h2>
+      <p class="hint">3分まるごと（5fps・150px幅）。<code>img</code> 要素なので、動画のプレビュー上限に影響されません。</p>
+      <img class="full" src="./motion-skill-explainer-3min.gif" alt="全尺GIF" />
+
       <h2>本編 / FULL FILM</h2>
       <div class="film">
-        <video id="film" src="./motion-skill-explainer-3min.mp4" controls preload="metadata"></video>
-        <dl class="meta" id="film-meta">
+        <div>
+          <video id="film" src="./motion-skill-explainer-3min.mp4" controls preload="metadata" playsinline></video>
+          <div class="row">
+            <a href="./motion-skill-explainer-3min.mp4" target="_blank">MP4を直接開く</a>
+            <a href="./motion-skill-explainer-3min.gif" target="_blank">GIFを直接開く</a>
+          </div>
+        </div>
+        <dl class="meta">
           <dt>file</dt><dd>motion-skill-explainer-3min.mp4</dd>
-          <dt>duration</dt><dd id="film-duration">読み込み中…</dd>
-          <dt>seekable</dt><dd id="film-seekable">—</dd>
+          <dt>duration（ブラウザが読んだ値）</dt><dd class="live" id="film-duration">読み込み中…</dd>
+          <dt>seekable（最後までシーク可能か）</dt><dd class="live" id="film-seekable">—</dd>
           <dt>resolution</dt><dd id="film-size">—</dd>
-          <dt>current</dt><dd id="film-current">0.00s</dd>
+          <dt>currentTime</dt><dd id="film-current">0.000s</dd>
+          <dt>buffered</dt><dd id="film-buffered">—</dd>
+          <dt>format</dt><dd>H.264 / yuv420p / tv range / bt709 / 1s keyframes / faststart</dd>
         </dl>
       </div>
 
@@ -97,65 +94,65 @@
       <div class="grid" id="scenes"></div>
 
       <div class="note">
-        <b>8秒ほどで止まる場合:</b> ファイル側の尺ではありません。上の <code>duration</code> が
-        <b>180.000s</b> と表示されていれば、ファイルは3分ぶん入っています。
-        その場合はビューアのプレビュー上限が原因なので、シーン別クリップ（各20〜24秒）か
-        GIF、または Remotion Studio（別枠のプレビュー）でご確認ください。
+        <b>動画が8秒ほどで止まる場合、ファイルの尺ではありません。</b>
+        上の <code>duration</code> が <b>180.000s</b>、<code>seekable</code> が <b>180.000s</b> と出ていれば、
+        ファイルは最後まで入っています（ffprobe でも <code>nb_frames=10800</code> / <code>duration=180.000000</code>）。
+        その場合はこのページの <b>GIF</b> か <b>フィルムストリップ</b>、または Remotion Studio のプレビューでご確認ください。
+        シーン別クリップ（各20〜24秒）とそのGIFも下に並べてあります。
       </div>
     </main>
 
     <script>
       const fmt = (n) => (Number.isFinite(n) ? n.toFixed(3) + "s" : "n/a");
 
-      const attach = (video, durationEl, extra = {}) => {
+      const attach = (video, els) => {
         const update = () => {
-          durationEl.textContent = fmt(video.duration);
-          if (extra.seekable && video.seekable.length) {
-            extra.seekable.textContent = fmt(video.seekable.end(0));
-          }
-          if (extra.size) extra.size.textContent = video.videoWidth + "×" + video.videoHeight;
+          if (els.duration) els.duration.textContent = fmt(video.duration);
+          if (els.seekable && video.seekable.length) els.seekable.textContent = fmt(video.seekable.end(0));
+          if (els.size && video.videoWidth) els.size.textContent = video.videoWidth + "×" + video.videoHeight;
+          if (els.current) els.current.textContent = fmt(video.currentTime);
+          if (els.buffered) els.buffered.textContent = video.buffered.length ? fmt(video.buffered.end(video.buffered.length - 1)) : "—";
         };
-        video.addEventListener("loadedmetadata", update);
-        video.addEventListener("durationchange", update);
-        video.addEventListener("timeupdate", update);
-        if (extra.current) {
-          video.addEventListener("timeupdate", () => (extra.current.textContent = fmt(video.currentTime)));
+        for (const evt of ["loadedmetadata", "durationchange", "progress", "timeupdate", "seeked", "canplay"]) {
+          video.addEventListener(evt, update);
         }
+        update();
       };
 
-      const film = document.getElementById("film");
-      attach(film, document.getElementById("film-duration"), {
+      attach(document.getElementById("film"), {
+        duration: document.getElementById("film-duration"),
         seekable: document.getElementById("film-seekable"),
         size: document.getElementById("film-size"),
         current: document.getElementById("film-current"),
+        buffered: document.getElementById("film-buffered"),
       });
 
       const scenes = [
-        ["01 Opening", "01-opening"],
-        ["02 Repository", "02-repository"],
-        ["03 Structure", "03-structure"],
-        ["04 Workflow", "04-workflow"],
-        ["05 Frame driven", "05-frame-driven"],
-        ["06 Timing", "06-timing"],
-        ["07 Layout", "07-layout"],
-        ["08 More skills", "08-more-skills"],
-        ["09 Closing", "09-closing"],
+        ["01 Opening", "01-opening", "9.0s"],
+        ["02 Repository", "02-repository", "16.0s"],
+        ["03 Structure", "03-structure", "22.0s"],
+        ["04 Workflow", "04-workflow", "24.0s"],
+        ["05 Frame driven", "05-frame-driven", "24.0s"],
+        ["06 Timing", "06-timing", "24.0s"],
+        ["07 Layout", "07-layout", "22.0s"],
+        ["08 More skills", "08-more-skills", "20.0s"],
+        ["09 Closing", "09-closing", "21.0s"],
       ];
 
       const grid = document.getElementById("scenes");
-      for (const [label, slug] of scenes) {
+      for (const [label, slug, expected] of scenes) {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
           <h3>${label}</h3>
-          <div class="dur" data-roledur>—</div>
+          <div class="dur"><span data-roledur>—</span> / 想定 ${expected}</div>
           <video src="./scenes/${slug}.mp4" controls preload="metadata" muted playsinline></video>
           <div class="row">
             <a href="./scenes/${slug}.gif" target="_blank">GIF</a>
             <a href="./scenes/${slug}.mp4" target="_blank">MP4</a>
           </div>`;
         grid.appendChild(card);
-        attach(card.querySelector("video"), card.querySelector("[data-roledur]"));
+        attach(card.querySelector("video"), { duration: card.querySelector("[data-roledur]") });
       }
     </script>
   </body>

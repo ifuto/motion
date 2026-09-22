@@ -6,6 +6,7 @@
  *   1. a compatibility re-encode of the whole film (yuv420p, limited range,
  *      bt709, 1s keyframes, faststart)
  *   2. one clip per scene, so a scene can be reviewed on its own
+ *   3. a full-length GIF and a film strip PNG, for viewers that cap long video
  *
  * Usage: node scripts/make-preview-clips.mjs <master.mp4> <outDir>
  */
@@ -132,6 +133,125 @@ for (const clip of CLIPS) {
   ]);
   console.log("scene  ", clip.name.padEnd(16), "|", probe(target));
 }
+
+// A full-length GIF and a film strip PNG: viewers that cap long videos still
+// show these in full, and the strip makes the three-minute structure visible
+// at a glance.
+const fullGif = path.join(outDir, "motion-skill-explainer-3min.gif");
+const palette = path.join(outDir, ".palette.png");
+run(ffmpeg, [
+  "-hide_banner",
+  "-loglevel",
+  "error",
+  "-y",
+  "-i",
+  film,
+  "-vf",
+  "scale=150:-2:flags=lanczos,palettegen=max_colors=64:stats_mode=diff",
+  palette,
+]);
+run(ffmpeg, [
+  "-hide_banner",
+  "-loglevel",
+  "error",
+  "-y",
+  "-i",
+  film,
+  "-i",
+  palette,
+  "-r",
+  "5",
+  "-lavfi",
+  "[0:v]scale=150:-2:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer",
+  "-loop",
+  "0",
+  fullGif,
+]);
+fs.rmSync(palette, { force: true });
+console.log("gif     full film        |", (fs.statSync(fullGif).size / 1024 / 1024).toFixed(2) + " MB");
+
+const stillsDir = path.join(outDir, ".stills");
+fs.rmSync(stillsDir, { recursive: true, force: true });
+fs.mkdirSync(stillsDir, { recursive: true });
+const total = Number(
+  /duration=([\d.]+)/.exec(
+    execFileSync(ffprobe, [
+      "-v",
+      "error",
+      "-show_entries",
+      "format=duration",
+      "-of",
+      "default=noprint_wrappers=1",
+      film,
+    ]).toString(),
+  )[1],
+);
+const step = 5;
+const ticks = [];
+for (let t = 0, i = 0; t < total; t += step, i++) {
+  const still = path.join(stillsDir, `f${String(i).padStart(2, "0")}.png`);
+  run(ffmpeg, [
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-y",
+    "-ss",
+    String(t),
+    "-i",
+    film,
+    "-frames:v",
+    "1",
+    "-vf",
+    "scale=150:-2:flags=lanczos",
+    still,
+  ]);
+  const label = `${Math.floor(t / 60)}:${String(Math.round(t % 60)).padStart(2, "0")}`;
+  const scene = CLIPS.filter((c) => t >= c.start).pop();
+  const captioned = path.join(stillsDir, `t${String(i).padStart(2, "0")}.png`);
+  run("convert", [
+    still,
+    "-background",
+    "#F2F0EB",
+    "-fill",
+    "#0B0B0C",
+    "-font",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
+    "-pointsize",
+    "16",
+    "label:" + `${label}  ${scene.name.toUpperCase().replace(/-/g, " ")}`,
+    "-gravity",
+    "center",
+    "-append",
+    captioned,
+  ]);
+  ticks.push(captioned);
+}
+const strip = path.join(outDir, "film-strip.png");
+run("montage", [...ticks, "-tile", "6x6", "-geometry", "+10+10", "-background", "#FFFFFF", path.join(stillsDir, "grid.png")]);
+run("convert", [
+  path.join(stillsDir, "grid.png"),
+  "-bordercolor",
+  "#F2F0EB",
+  "-border",
+  "24",
+  "-background",
+  "#F2F0EB",
+  "-fill",
+  "#0B0B0C",
+  "-font",
+  "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
+  "-pointsize",
+  "30",
+  "-gravity",
+  "west",
+  "label:" + `FILM STRIP — ${total.toFixed(1)}s / ${Math.round(total * 60)} frames / ${ticks.length} frames sampled every ${step}s`,
+  "-gravity",
+  "center",
+  "-append",
+  strip,
+]);
+fs.rmSync(stillsDir, { recursive: true, force: true });
+console.log("strip   film-strip.png");
 
 // The review page lets the browser itself report each file's duration.
 const page = path.resolve("scripts/review-page.html");
