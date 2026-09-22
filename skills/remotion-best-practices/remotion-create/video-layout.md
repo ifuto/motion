@@ -1,6 +1,3 @@
-# 取得原文: remotion-create/video-layout.md
-# 取得元: https://github.com/remotion-dev/skills/blob/main/skills/remotion-best-practices/remotion-create/video-layout.md
-
 You are designing a video, not a webpage.
 
 - Decide what the viewer should notice first in each scene. Build the frame around that one thing.

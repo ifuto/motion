@@ -4,7 +4,8 @@ description: Search Remotion documentation
 version: 4.0.526
 ---
 
-This skill teaches you how to discover and read current Remotion documentation. If this is not relevant, load [Remotion Best Practices](../SKILL.md) instead.
+This skill teaches you how to discover and read current Remotion documentation.
+If this is not relevant, load [Remotion Best Practices](../SKILL.md) instead.
 
 ## Searching the docs
 
@@ -17,7 +18,7 @@ Content-Type: application/x-www-form-urlencoded
 {
   "requests": [
     {
-      "query": "<query>",
+      "query": "<your search query>",
       "indexName": "remotion",
       "params": "attributesToRetrieve=[\"hierarchy.lvl0\",\"hierarchy.lvl1\",\"hierarchy.lvl2\",\"url\"]&hitsPerPage=10"
     }

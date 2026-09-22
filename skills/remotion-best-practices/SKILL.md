@@ -6,7 +6,9 @@ version: 4.0.526
 
 ## Preserve user changes
 
-Users may make edits in the code outside of the conversation. If you detect a surprising change made in the meanwhile, don't overwrite it, assume it was intentional or ask for confirmation.
+Users may make edits in the code outside of the conversation.
+
+If you detect a surprising change made in the meanwhile, don't overwrite it, assume it was intentional or ask for confirmation.
 
 ## Creating a video
 
@@ -46,7 +48,7 @@ When working with Captions, load [Remotion Captions](./remotion-captions/REFEREN
 
 ## Creating a SaaS, automation or application
 
-Use the [Remotion SaaS skill](./remotion-saas/REFERENCE.md) for knowledge about Remotion-powered SaaS apps, such as rendering on Lambda, Vercel, Cloudflare, via Express.js, client-side rendering, or for finding the right SaaS template.
+Use the [Remotion SaaS skill](./remotion-saas/REFERENCE.md) for knowledge about Remotion-powered SaaS apps, such as `<Player>`, rendering on Lambda, Vercel, Cloudflare, via Express.js, client-side rendering, or for finding the right SaaS template.
 
 ## Looking up Remotion APIs and documentation
 
